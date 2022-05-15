@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        maven { url = "https://maven.fabricmc.net/" }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'cn.apisium.papershelled' version '1.2.1'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
+
+repositories {
+    mavenLocal()
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = "https://maven.fabricmc.net/" }
+    mavenCentral()
+}
+
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+group 'top.theothers'
+version '1.00.0'
+
+dependencies {
+    compileOnly paperShelled.jar()
+    compileOnly 'net.deechael:dcg:1.03.5'
+}
+
+paperShelled {
+    archiveClassifier = ''
+    jarUrl = 'https://papermc.io/api/v2/projects/paper/versions/1.18.2/builds/333/downloads/paper-1.18.2-333.jar'
+}
+
+shadowJar {
+    dependencies {
+        relocate('org.bukkit.craftbukkit', 'org.bukkit.craftbukkit.' + paperShelled.craftBukkitVersion.get())
+    }
+    archiveClassifier.set('')
+    minimize()
+}
+build.dependsOn(shadowJar)
